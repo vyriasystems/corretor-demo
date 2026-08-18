@@ -65,11 +65,11 @@ function ExperienceBody() {
     if (!stage || !track) return;
 
     const video = stage.querySelector<HTMLVideoElement>("[data-scrub-video]");
-    const canvas = stage.querySelector<HTMLCanvasElement>("[data-scrub-canvas]");
-    if (!video || !canvas) return;
+    const canvasNode = stage.querySelector<HTMLCanvasElement>("[data-scrub-canvas]");
+    if (!video || !canvasNode) return;
+    const canvas: HTMLCanvasElement = canvasNode;
 
     let cancelled = false;
-    let trigger: ScrollTrigger | undefined;
     let raf = 0;
     let usingCanvas = false;
     const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
@@ -124,7 +124,7 @@ function ExperienceBody() {
     setReady(true);
     raf = requestAnimationFrame(paint);
 
-    trigger = ScrollTrigger.create({
+    const trigger = ScrollTrigger.create({
       trigger: track,
       start: "top top",
       end: "bottom bottom",
@@ -186,7 +186,7 @@ function ExperienceBody() {
     return () => {
       cancelled = true;
       window.removeEventListener("resize", resizeCanvas);
-      trigger?.kill();
+      trigger.kill();
       observers.forEach((observer) => observer?.disconnect());
       if (raf) cancelAnimationFrame(raf);
     };
