@@ -1,0 +1,9 @@
+export default function Icon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="#0C1F1C" />
+      <path d="M8 22 V12 L16 7 L24 12 V22" stroke="#C6A15B" strokeWidth="1.6" />
+      <path d="M13 22 V16 H19 V22" stroke="#F3EEE4" strokeWidth="1.4" />
+    </svg>
+  );
+}
