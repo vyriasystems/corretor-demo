@@ -34,7 +34,7 @@ const config: Config = {
       },
       backgroundImage: {
         "veil-video":
-          "linear-gradient(180deg, rgba(12,31,28,0.62) 0%, rgba(12,31,28,0.22) 36%, rgba(12,31,28,0.28) 62%, rgba(12,31,28,0.78) 100%)",
+          "linear-gradient(180deg, rgba(12,31,28,0.42) 0%, rgba(12,31,28,0.1) 36%, rgba(12,31,28,0.14) 62%, rgba(12,31,28,0.55) 100%)",
       },
     },
   },

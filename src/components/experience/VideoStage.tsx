@@ -26,7 +26,7 @@ export const VideoStage = forwardRef<HTMLDivElement, VideoStageProps>(function V
         data-scrub-canvas
         className={`absolute inset-0 h-full w-full ${mode === "canvas" ? "opacity-100" : "opacity-0"}`}
       />
-      <div className="absolute inset-0 bg-petrol/30" />
+      <div className="absolute inset-0 bg-petrol/15" />
       <div className="absolute inset-0 bg-veil-video" />
     </div>
   );

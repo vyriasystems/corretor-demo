@@ -18,25 +18,21 @@ import { VideoStage } from "@/components/experience/VideoStage";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type FrameManifest = { files: string[] };
+type FrameManifest = { files: string[]; fps?: number };
 
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
+const VIDEO_SPEED = 1.2;
 
 export function CinematicExperience() {
-  const [reduced, setReduced] = useState(false);
   const [booted, setBooted] = useState(false);
 
   useEffect(() => {
-    setReduced(prefersReducedMotion());
     setBooted(true);
   }, []);
 
   if (!booted) return <Loader visible />;
 
   return (
-    <SmoothScroll enabled={!reduced}>
+    <SmoothScroll enabled={false}>
       <ExperienceBody />
     </SmoothScroll>
   );
@@ -49,9 +45,8 @@ function ExperienceBody() {
   const barRef = useRef<HTMLDivElement>(null);
   const framesRef = useRef<(HTMLImageElement | undefined)[]>([]);
   const progressRef = useRef(0);
-  const lastIndexRef = useRef(-1);
+  const lastDrawnRef = useRef(-1);
   const [mode, setMode] = useState<"video" | "canvas">("video");
-  const [ready, setReady] = useState(false);
   const [showPortrait, setShowPortrait] = useState(false);
   const [activeId, setActiveId] = useState<(typeof sections)[number]["id"]>("hero");
 
@@ -64,17 +59,19 @@ function ExperienceBody() {
     const track = trackRef.current;
     if (!stage || !track) return;
 
-    const video = stage.querySelector<HTMLVideoElement>("[data-scrub-video]");
     const canvasNode = stage.querySelector<HTMLCanvasElement>("[data-scrub-canvas]");
-    if (!video || !canvasNode) return;
+    if (!canvasNode) return;
     const canvas: HTMLCanvasElement = canvasNode;
 
     let cancelled = false;
     let raf = 0;
-    let usingCanvas = false;
     const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
+    if (ctx) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+    }
 
-    function drawFrame(image: HTMLImageElement) {
+    function drawFrame(image: HTMLImageElement, alpha = 1) {
       if (!ctx) return;
       const width = canvas.width;
       const height = canvas.height;
@@ -91,37 +88,43 @@ function ExperienceBody() {
         dh = width / imageRatio;
         dy = (height - dh) / 2;
       }
+      ctx.globalAlpha = alpha;
       ctx.drawImage(image, dx, dy, dw, dh);
+      ctx.globalAlpha = 1;
     }
 
     function paint() {
       if (cancelled) return;
       raf = requestAnimationFrame(paint);
-      if (!usingCanvas) return;
       const frames = framesRef.current;
       const last = frames.length - 1;
       if (last < 0) return;
-      const index = Math.max(0, Math.min(last, Math.round(progressRef.current * last)));
-      if (index === lastIndexRef.current) return;
-      const image = frames[index] ?? frames.find(Boolean);
-      if (!image) return;
-      lastIndexRef.current = index;
-      drawFrame(image);
+      const exact = Math.min(1, progressRef.current * VIDEO_SPEED) * last;
+      if (Math.abs(exact - lastDrawnRef.current) < 0.01) return;
+      lastDrawnRef.current = exact;
+      const i0 = Math.max(0, Math.min(last, Math.floor(exact)));
+      const i1 = Math.min(last, i0 + 1);
+      const mix = exact - i0;
+      const first = frames[i0] ?? frames.find(Boolean);
+      if (!first) return;
+      drawFrame(first, 1);
+      const next = frames[i1];
+      if (next && i1 !== i0 && mix > 0.03) drawFrame(next, mix);
     }
 
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      lastIndexRef.current = -1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      canvas.width = Math.max(1, Math.round(window.innerWidth * dpr));
+      canvas.height = Math.max(1, Math.round(window.innerHeight * dpr));
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+      }
+      lastDrawnRef.current = -1;
     }
 
-    video.pause();
-    video.muted = true;
-    video.playsInline = true;
-    video.addEventListener("play", () => video.pause());
     window.addEventListener("resize", resizeCanvas, { passive: true });
     resizeCanvas();
-    setReady(true);
     raf = requestAnimationFrame(paint);
 
     const trigger = ScrollTrigger.create({
@@ -166,18 +169,17 @@ function ExperienceBody() {
             image.onerror = () => resolve();
             image.src = src;
           });
-        await Promise.all(manifest.files.slice(0, 16).map((src, index) => loadOne(src, index)));
+        await Promise.all(manifest.files.slice(0, 12).map((src, index) => loadOne(src, index)));
         if (cancelled) return;
-        usingCanvas = true;
         setMode("canvas");
-        lastIndexRef.current = -1;
-        for (let i = 16; i < manifest.files.length; i += 16) {
+        lastDrawnRef.current = -1;
+        for (let i = 12; i < manifest.files.length; i += 12) {
           if (cancelled) return;
-          await Promise.all(manifest.files.slice(i, i + 16).map((src, offset) => loadOne(src, i + offset)));
+          await Promise.all(manifest.files.slice(i, i + 12).map((src, offset) => loadOne(src, i + offset)));
           await new Promise((resolve) => window.setTimeout(resolve, 0));
         }
       } catch {
-        /* keep first video frame */
+        /* keep the first painted frame */
       }
     })();
 
@@ -195,13 +197,12 @@ function ExperienceBody() {
   function scrollToId(id: string) {
     const el = document.getElementById(id);
     if (!el) return;
-    if (lenis) lenis.scrollTo(el, { offset: 0, duration: 1 });
+    if (lenis) lenis.scrollTo(el, { offset: 0, duration: 0.8 });
     else el.scrollIntoView({ behavior: "smooth" });
   }
 
   return (
     <>
-      <Loader visible={!ready} />
       <VideoStage ref={stageRef} mode={mode} />
       <div ref={barRef} className="fixed left-0 top-0 z-40 h-[2px] w-full origin-left bg-gold" style={{ transform: "scaleX(0)" }} />
       <header className="pointer-events-none fixed inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-5 sm:px-8">
@@ -247,7 +248,11 @@ function ExperienceBody() {
 
 function Loader({ visible }: { visible: boolean }) {
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-petrol-deep transition-opacity duration-700 ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}>
+    <div
+      className={`pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-petrol-deep transition-opacity duration-500 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+    >
       <Logo />
     </div>
   );

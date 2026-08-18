@@ -25,11 +25,11 @@ export function SmoothScroll({
     let removeScroll: (() => void) | undefined;
 
     const instance = new Lenis({
-      lerp: 0.1,
+      lerp: 0.12,
       smoothWheel: true,
       syncTouch: false,
       touchMultiplier: 1,
-      wheelMultiplier: 1,
+      wheelMultiplier: 1.15,
       autoRaf: true,
       overscroll: true,
       allowNestedScroll: true,

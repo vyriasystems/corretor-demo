@@ -13,10 +13,13 @@ function resolveFfmpeg() {
   } catch {
     /* use fallback */
   }
-  const fallback = path.join(
-    "c:\\Users\\Usuario\\Desktop\\engeluz\\node_modules\\ffmpeg-static\\ffmpeg.exe",
-  );
-  if (existsSync(fallback)) return fallback;
+  const fallbacks = [
+    path.join("c:\\Users\\Usuario\\Desktop\\alicerce-construtora\\node_modules\\ffmpeg-static\\ffmpeg.exe"),
+    path.join("c:\\Users\\Usuario\\Desktop\\demo-construtora\\node_modules\\ffmpeg-static\\ffmpeg.exe"),
+    path.join("c:\\Users\\Usuario\\Desktop\\engeluz\\node_modules\\ffmpeg-static\\ffmpeg.exe"),
+  ];
+  const found = fallbacks.find((file) => existsSync(file));
+  if (found) return found;
   throw new Error("ffmpeg-static not found");
 }
 
@@ -44,18 +47,50 @@ async function main() {
       .map((file) => fs.unlink(path.join(framesDir, file))),
   );
 
-  console.log("Extracting scroll frames...");
+  console.log("Re-encoding video with dense keyframes for scrubbing...");
+  const tempVideo = path.join(root, "public", "video", "rafael-couto.scrub.mp4");
+  await run(ffmpeg, [
+    "-y",
+    "-i",
+    input,
+    "-an",
+    "-c:v",
+    "libx264",
+    "-pix_fmt",
+    "yuv420p",
+    "-preset",
+    "fast",
+    "-crf",
+    "19",
+    "-g",
+    "4",
+    "-keyint_min",
+    "4",
+    "-bf",
+    "0",
+    "-sc_threshold",
+    "0",
+    "-movflags",
+    "+faststart",
+    "-vf",
+    "scale='min(1920,iw)':-2:flags=lanczos",
+    tempVideo,
+  ]);
+  await fs.copyFile(tempVideo, input);
+  await fs.unlink(tempVideo);
+
+  console.log("Extracting high-res scroll frames...");
   await run(ffmpeg, [
     "-y",
     "-i",
     input,
     "-vf",
-    "fps=12,scale=1280:-2",
+    "fps=18,scale=1600:-2:flags=lanczos",
     "-c:v",
-    "mjpeg",
-    "-q:v",
-    "4",
-    path.join(framesDir, "frame-%03d.jpg"),
+    "libwebp",
+    "-quality",
+    "82",
+    path.join(framesDir, "frame-%03d.webp"),
   ]);
 
   const files = (await fs.readdir(framesDir))
@@ -65,7 +100,7 @@ async function main() {
 
   await fs.writeFile(
     path.join(framesDir, "manifest.json"),
-    JSON.stringify({ fps: 12, count: files.length, files }, null, 2),
+    JSON.stringify({ fps: 18, count: files.length, files }, null, 2),
   );
 
   console.log(`Wrote ${files.length} frames.`);
