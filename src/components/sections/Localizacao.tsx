@@ -7,7 +7,7 @@ export function Localizacao() {
       <div className="grid items-center gap-10 lg:grid-cols-[1fr_1fr]">
         <div>
           <p className="section-kicker">Localização de atuação</p>
-          <h2 className="display-title">Senador Canedo e o entorno que eu realmente atendo</h2>
+          <h2 className="display-title">Caldas Novas e o entorno que eu realmente atendo</h2>
           <p className="mt-5 max-w-md text-sm font-light leading-relaxed text-bone/70">
             Não é mapa genérico de imobiliária. São os bairros onde eu visito, negoceio e conheço rua por rua.
           </p>

@@ -4,10 +4,10 @@ export const broker = {
   creci: "CRECI 12.345-GO",
   years: 8,
   families: 150,
-  city: "Senador Canedo",
-  region: "Senador Canedo e região",
+  city: "Caldas Novas",
+  region: "Caldas Novas e região",
   headline: "Encontre o imóvel que combina com a vida que você quer viver.",
-  tagline: "Curadoria de imóveis de alto padrão em Senador Canedo e região.",
+  tagline: "Curadoria de imóveis de alto padrão em Caldas Novas e região.",
   bio: "Há 8 anos ajudando famílias a encontrar não só um imóvel, mas o lugar certo pra próxima fase da vida. Atendimento próximo, sem pressa e sem pressão — porque decisão de imóvel não se toma com pressa.",
   phoneDisplay: "(62) 99999-0000",
   phoneHref: "tel:+5562999990000",
@@ -25,7 +25,7 @@ export function waLink(message: string) {
 }
 
 export const generalWhatsApp = waLink(
-  "Olá Rafael, vim pelo site. Quero conversar sobre um imóvel em Senador Canedo e região.",
+  "Olá Rafael, vim pelo site. Quero conversar sobre um imóvel em Caldas Novas e região.",
 );
 
 export const contactWhatsApp = waLink(
@@ -54,7 +54,7 @@ export const properties = [
   {
     id: "casa-jardim-primavera",
     name: "Casa Jardim Primavera",
-    location: "Jardim Primavera, Senador Canedo",
+    location: "Jardim Primavera, Caldas Novas",
     area: "280 m²",
     beds: "4 suítes",
     price: "R$ 890 mil",
@@ -65,7 +65,7 @@ export const properties = [
   {
     id: "cobertura-parque-flores",
     name: "Cobertura Parque das Flores",
-    location: "Parque das Flores, Senador Canedo",
+    location: "Parque das Flores, Caldas Novas",
     area: "186 m²",
     beds: "3 suítes",
     price: "R$ 1,15 mi",
@@ -76,7 +76,7 @@ export const properties = [
   {
     id: "sobrado-eldorado",
     name: "Sobrado Residencial Eldorado",
-    location: "Residencial Eldorado, Senador Canedo",
+    location: "Residencial Eldorado, Caldas Novas",
     area: "320 m²",
     beds: "5 quartos",
     price: "R$ 1,38 mi",
@@ -87,7 +87,7 @@ export const properties = [
   {
     id: "apto-village-garden",
     name: "Apartamento Village Garden",
-    location: "Village Garden, Senador Canedo",
+    location: "Village Garden, Caldas Novas",
     area: "124 m²",
     beds: "3 quartos",
     price: "R$ 620 mil",
@@ -98,7 +98,7 @@ export const properties = [
   {
     id: "casa-orquideas",
     name: "Casa Condomínio Orquídeas",
-    location: "Condomínio Orquídeas, Senador Canedo",
+    location: "Condomínio Orquídeas, Caldas Novas",
     area: "240 m²",
     beds: "4 quartos",
     price: "R$ 975 mil",
@@ -109,7 +109,7 @@ export const properties = [
   {
     id: "loft-centro",
     name: "Loft Centro",
-    location: "Centro, Senador Canedo",
+    location: "Centro, Caldas Novas",
     area: "98 m²",
     beds: "2 quartos",
     price: "R$ 485 mil",
@@ -170,6 +170,6 @@ export const neighborhoods = [
   { name: "Village Garden", note: "Condomínio com lazer completo" },
   { name: "Condomínio Orquídeas", note: "Privacidade e área verde" },
   { name: "Centro", note: "Lofts e praticidade urbana" },
-  { name: "Aparecida de Goiânia", note: "Entorno metropolitano" },
-  { name: "Sul de Goiânia", note: "Quem busca subir de região" },
+  { name: "Rio Quente", note: "Resorts e águas termais" },
+  { name: "Marzagão", note: "Entorno e tranquilidade" },
 ];

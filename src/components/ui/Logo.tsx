@@ -5,7 +5,7 @@ export function Logo({ className = "" }: { className?: string }) {
         Rafael Couto
       </span>
       <span className="mt-0.5 text-[10px] uppercase tracking-[0.28em] text-gold/80">
-        Imóveis · Senador Canedo
+        Imóveis · Caldas Novas
       </span>
     </div>
   );

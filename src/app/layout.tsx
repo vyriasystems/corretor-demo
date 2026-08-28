@@ -16,9 +16,9 @@ const sans = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Rafael Couto — Imóveis de alto padrão em Senador Canedo",
+  title: "Rafael Couto — Imóveis de alto padrão em Caldas Novas",
   description:
-    "Curadoria de imóveis de alto padrão em Senador Canedo e região. Atendimento próximo, sem pressa e sem pressão.",
+    "Curadoria de imóveis de alto padrão em Caldas Novas e região. Atendimento próximo, sem pressa e sem pressão.",
 };
 
 export default function RootLayout({

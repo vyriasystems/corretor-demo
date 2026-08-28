@@ -34,7 +34,7 @@ export function Hero({ showPortrait }: { showPortrait: boolean }) {
             <div className="absolute -inset-6 rounded-[2rem] bg-gold/10 blur-2xl" />
             <img
               src={broker.portrait}
-              alt="Rafael Couto, corretor de imóveis em Senador Canedo"
+              alt="Rafael Couto, corretor de imóveis em Caldas Novas"
               className="relative aspect-[3/4] w-full rounded-[1.6rem] object-cover object-top opacity-90 shadow-[0_30px_80px_rgba(0,0,0,0.45)] ring-1 ring-gold/25"
             />
             <p className="mt-4 text-center text-[11px] uppercase tracking-[0.22em] text-gold/80">
